@@ -1,0 +1,69 @@
+---
+# tasks file for ansible-role-openio-diamond
+
+- name: "Diamond: Include {{ ansible_distribution }} variables"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- name: "Diamond: Configure repositories for {{ ansible_os_family }} distribution"
+  tags:
+    - install
+  include : "{{ ansible_os_family }}.yml"
+
+- name: 'Diamond: Install packages'
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items: "{{ diamond_packages }}"
+
+- name: 'Diamond: Set configurations'
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode:  0644
+  with_items:
+    - { src: "{{ diamond_global_conf_template }}", dest: "{{ diamond_global_conf_path }}" }
+#   notify:
+#     - restart diamond
+
+- name: 'Diamond: Configure handlers'
+  template:
+    src: handler.conf.j2
+    dest: "{{ diamond_handler_conf_dir }}{{ item.name }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ diamond_handlers }}"
+
+- name: 'Diamond: Configure default collectors'
+  template:
+    src: collector.conf.j2
+    dest: "{{ diamond_collector_conf_dir }}{{ item.name }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ diamond_collectors_default }}"
+  when: diamond_collectors_default_enabled
+
+- name: 'Diamond: Configure OpenIO SDS collectors'
+  template:
+    src: collector.conf.j2
+    dest: "{{ diamond_collector_conf_dir }}{{ item.name }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ diamond_collectors_openio }}"
+  when: diamond_collectors_openio_enabled
+
+- name: 'Diamond: Configure custom collectors'
+  template:
+    src: collector.conf.j2
+    dest: "{{ diamond_collector_conf_dir }}{{ item.name }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ diamond_collectors_custom }}"

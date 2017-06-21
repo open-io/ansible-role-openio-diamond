@@ -1,0 +1,40 @@
+[server]
+handlers = {% for module in diamond_handlers|map(attribute='module')|list %}{{ module }}{% if not loop.last %},{% endif %}{% endfor %}
+
+user = {{ diamond_server_user }}
+group = {{ diamond_server_group }}
+pid_file = {{ diamond_server_pid_file }}
+collectors_path = /usr/share/diamond/collectors/
+collectors_config_path = /etc/diamond/collectors
+handlers_config_path = /etc/diamond/handlers
+handlers_path = /usr/share/diamond/handlers/
+metric_queue_size = {{ diamond_metric_queue_size }}
+
+[collectors]
+[[default]]
+interval = {{ diamond_collectors_default_interval }}
+
+[handlers]
+keys = rotated_file
+[[default]]
+
+[loggers]
+keys = root
+
+[formatters]
+keys = default
+
+[logger_root]
+handlers = rotated_file
+logger = INFO
+propagate = 1
+
+[handler_rotated_file]
+args = ('/var/log/diamond/diamond.log', 'midnight', 1, 7)
+class = handlers.TimedRotatingFileHandler
+formatter = default
+level = INFO
+
+[formatter_default]
+datefmt =
+format = [%(asctime)s] [%(threadName)s] %(message)s

@@ -1,0 +1,49 @@
+---
+# defaults file for ansible-role-openio-diamond
+
+# OpenIO
+openio_release: '16.10'
+openio_sds_repository: "http://mirror.openio.io/pub/repo/openio/sds/{{ openio_release }}"
+
+diamond_service_name: diamond
+diamond_packages:
+  - python-diamond
+  - python-diamond-openio
+
+diamond_global_conf_template: diamond.conf.j2
+diamond_global_conf_path: /etc/diamond/diamond.conf
+diamond_handler_conf_dir: /etc/diamond/handlers/
+diamond_collector_conf_dir: /etc/diamond/collectors/
+
+# Diamond configuration
+#diamond_server_handlers: diamond.handler.graphite.GraphiteHandler,diamond.handler.archive.ArchiveHandler
+diamond_server_handlers: diamond.handler.graphite.GraphiteHandler
+diamond_server_user: root
+diamond_server_group: root
+diamond_server_pid_file: /run/diamond.pid
+diamond_metric_queue_size: 65536
+
+# Handlers
+diamond_handlers:
+  - { name: GraphiteHandler, module: diamond.handler.graphite.GraphiteHandler, options: { enabled: true, host: "10.0.0.2", port: 2003, timeout: 10, batch: 1000 } }
+
+# Collectors
+diamond_collectors_default_interval: 10
+
+diamond_collectors_default_enabled: true
+diamond_collectors_default:
+  - { name: CPUCollector, options: { enabled: true, normalize: true } }
+  - { name: DiskSpaceCollector, options: { enabled: true } }
+  - { name: DiskUsageCollector, options: { enabled: true } }
+  - { name: LoadAverageCollector, options: { enabled: true } }
+  - { name: MemoryCollector, options: { enabled: true } }
+  - { name: NetstatCollector, options: { enabled: true } }
+  - { name: NetworkCollector, options: { enabled: true } }
+  - { name: VMStatCollector, options: { enabled: true } }
+diamond_collectors_openio_enabled: false
+diamond_collectors_openio:
+  - { name: OpenioBeanstalkdCollector, options: { enabled: true, instances: "OPENIO:{{ansible_default_ipv4.address}}:6014" } }
+  - { name: OpenioRedisCollector, options: { enabled: true, instances: "OPENIO:{{ansible_default_ipv4.address}}:6051" } }
+  - { name: OpenIOSDSCollector, options: { enabled: true, namespaces: OPENIO, fs-types: xfs } }
+  - { name: OpenioZookeeperCollector, options: { enabled: true, instances: "OPENIO:{{ansible_default_ipv4.address}}:6005" } }
+diamond_collectors_custom: []
