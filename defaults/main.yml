@@ -42,9 +42,10 @@ diamond_collectors_default:
   - { name: NetworkCollector, options: { enabled: true } }
   - { name: VMStatCollector, options: { enabled: true } }
 diamond_collectors_openio_enabled: false
+diamond_collectors_openio_namespace: OPENIO
 diamond_collectors_openio:
-  - { name: OpenioBeanstalkdCollector, options: { enabled: true, instances: "OPENIO:{{ansible_default_ipv4.address}}:6014" } }
-  - { name: OpenioRedisCollector, options: { enabled: true, instances: "OPENIO:{{ansible_default_ipv4.address}}:6051" } }
-  - { name: OpenIOSDSCollector, options: { enabled: true, namespaces: OPENIO, fs-types: xfs } }
-  - { name: OpenioZookeeperCollector, options: { enabled: true, instances: "OPENIO:{{ansible_default_ipv4.address}}:6005" } }
+  - { name: OpenioBeanstalkdCollector, options: { enabled: true, instances: "{{ diamond_collectors_openio_namespace }}:{{ansible_default_ipv4.address}}:6014" } }
+  - { name: OpenioRedisCollector, options: { enabled: true, instances: "{{ diamond_collectors_openio_namespace }}:{{ansible_default_ipv4.address}}:6051" } }
+  - { name: OpenIOSDSCollector, options: { enabled: true, namespaces: {{ diamond_collectors_openio_namespace }}, fs-types: xfs } }
+  - { name: OpenioZookeeperCollector, options: { enabled: true, instances: "{{ diamond_collectors_openio_namespace }}:{{ansible_default_ipv4.address}}:6005" } }
 diamond_collectors_custom: []
