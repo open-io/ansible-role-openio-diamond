@@ -25,8 +25,9 @@ diamond_metric_queue_size: 65536
 
 # Handlers
 diamond_handlers_graphite_host: "10.0.0.2"
+diamond_handlers_graphite_port: 2003
 diamond_handlers:
-  - { name: GraphiteHandler, module: diamond.handler.graphite.GraphiteHandler, options: { enabled: true, host: "{{ diamond_handlers_graphite_host }}", port: 2003, timeout: 10, batch: 1000 } }
+  - { name: GraphiteHandler, module: diamond.handler.graphite.GraphiteHandler, options: { enabled: true, host: "{{ diamond_handlers_graphite_host }}", port: "{{ diamond_handlers_graphite_port }}", timeout: 10, batch: 1000 } }
 
 # Collectors
 diamond_collectors_default_interval: 10
