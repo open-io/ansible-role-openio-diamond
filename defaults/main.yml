@@ -39,7 +39,7 @@ diamond_collectors_default:
   - { name: DiskUsageCollector, options: { enabled: true } }
   - { name: LoadAverageCollector, options: { enabled: true } }
   - { name: MemoryCollector, options: { enabled: true } }
-  - { name: NetstatCollector, options: { enabled: true } }
+  - { name: NetstatCollector, options: { enabled: false } }
   - { name: NetworkCollector, options: { enabled: true } }
   - { name: VMStatCollector, options: { enabled: true } }
 diamond_collectors_openio_enabled: false
