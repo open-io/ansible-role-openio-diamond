@@ -67,3 +67,9 @@
     group: root
     mode: 0644
   with_items: "{{ diamond_collectors_custom }}"
+
+- name: 'Diamond: Start service'
+  service:
+    name: "{{ diamond_service_name }}"
+    enabled: yes
+    state: started
